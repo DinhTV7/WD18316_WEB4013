@@ -12,7 +12,7 @@
     <div class="card my-5">
         <h4 class="card-header">{{ $title }}</h4>
         <div class="card-body">
-            <form action="{{ route('sanpham.store') }}" method="POST">
+            <form action="{{ route('sanpham.store') }}" method="POST" enctype="multipart/form-data">
                 {{-- Làm việc với Form trong Laravel --}}
                 {{-- 
                     CSRF Field: Là một trường ẩn mà Laravel bắt buộc nhúng vào form
@@ -44,6 +44,7 @@
                     <label class="form-label">Ngày nhập:</label>
                     <input type="date" class="form-control" name="ngay_nhap">
                 </div>
+
                 <div class="mb-3">
                     <label class="form-label">Trạng thái:</label>
                     <select class="form-select" name="trang_thai">
@@ -52,6 +53,13 @@
                         <option value="0">Hết hàng</option>
                     </select>
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Hình ảnh:</label>
+                    <input type="file" class="form-control" name="hinh_anh" onchange="showImage(event)">
+                </div>
+                <img id="image_san_pham" src="" alt="Hình ảnh sản phầm" style="width: 200px; display: none">
+
                 <div class="mb-3 d-flex justify-content-center">
                     <button type="reset" class="btn btn-outline-secondary me-3">Nhập lại</button>
                     <button type="submit" class="btn btn-success">Thêm mới</button>
@@ -62,4 +70,22 @@
 @endsection
 
 @section('js')
+    <script>
+        function showImage(event) {
+            const image_san_pham = document.getElementById('image_san_pham');
+
+            const file = event.target.files[0];
+
+            const render = new FileReader();
+
+            render.onload = function () {
+                image_san_pham.src = render.result;
+                image_san_pham.style.display = 'block';
+            }
+
+            if (file) {
+                render.readAsDataURL(file);
+            }
+        }
+    </script>
 @endsection

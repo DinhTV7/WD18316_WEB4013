@@ -32,12 +32,18 @@ class SanPham extends Model
     }
 
     // Xóa sản phẩm bằng Query Builder
+    public function deleteProduct($id) {
+        DB::table('san_phams')
+                    ->where('id', $id)
+                    ->delete();
+    }
     
 
     // Cách 3: Sử dụng Eloquent
     protected $table = 'san_phams';
 
     protected $fillable = [
+        'hinh_anh',
         'ma_san_pham',
         'ten_san_pham',
         'gia',

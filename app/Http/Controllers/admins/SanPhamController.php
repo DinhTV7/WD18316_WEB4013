@@ -60,6 +60,16 @@ class SanPhamController extends Controller
             // Cách 2:
             $params = $request->except('_token');
 
+            // Thêm hình ảnh
+            if ($request->hasFile('hinh_anh')) {
+                // Thêm hình ảnh
+                $filename = $request->file('hinh_anh')->store('uploads/sanpham', 'public');
+            } else {
+                $filename = null;
+            }
+
+            $params['hinh_anh'] = $filename;
+
             // Sử dụng Query Builder
             // $this->san_pham->createProduct($params);
 
@@ -105,11 +115,17 @@ class SanPhamController extends Controller
         // Lấy ra sản phẩm theo ID
         $san_pham = SanPham::findOrFail($id);
 
+        
+
         // dd($san_pham);
 
         if ($san_pham) {
             // Nếu tìm thấy sản phẩm thì mới tiến hành xóa sản phẩm đó đi
-            $san_pham->delete();
+            // Sử dụng Query Builder
+            $this->san_pham->deleteProduct($id);
+
+            // Sử dụng Eloquent
+            // $san_pham->delete();
             return redirect()->route('sanpham.index')->with('success', 'Xóa sản phẩm thành công!');
         }
     }

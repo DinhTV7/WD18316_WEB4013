@@ -22,6 +22,7 @@
         <table class="table">
             <thead class="table-dark">
                 <th>STT</th>
+                <th>Hình ảnh</th>
                 <th>Mã sản phẩm</th>
                 <th>Tên sản phẩm</th>
                 <th>Giá</th>
@@ -34,6 +35,9 @@
                 @foreach ($listSanPham as $index => $sanPham)
                 <tr>
                     <td>{{ $index + 1 }}</td>
+                    <td>
+                        <img src="{{ Storage::url($sanPham->hinh_anh) }}" width="150px" alt="Hình ảnh sản phẩm">
+                    </td>
                     <td>{{ $sanPham->ma_san_pham }}</td>
                     <td>{{ $sanPham->ten_san_pham }}</td>
                     <td>{{ $sanPham->gia }}</td>
