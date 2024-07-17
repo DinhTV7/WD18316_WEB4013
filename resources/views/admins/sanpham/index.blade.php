@@ -17,6 +17,11 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
         <h4>{{ $title }}</h4>
         <a href="{{ route('sanpham.create') }}" class="btn btn-success my-3">Thêm sản phẩm</a>
         <table class="table">
@@ -45,7 +50,9 @@
                     <td>{{ $sanPham->ngay_nhap }}</td>
                     <td>{{ $sanPham->trang_thai == 1 ? 'Còn hàng' : 'Hết hàng' }}</td>
                     <td>
-                        <form action="{{ route('sanpham.destroy', $sanPham->id) }}" method="POST" onsubmit="return confirm('Bạn có đồng ý xóa hay không?')">
+                        <a href="{{ route('sanpham.edit', $sanPham->id) }}" class="btn btn-warning">Sửa</a>
+                        <form action="{{ route('sanpham.destroy', $sanPham->id) }}" class="d-inline"
+                            method="POST" onsubmit="return confirm('Bạn có đồng ý xóa hay không?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Xóa</button>

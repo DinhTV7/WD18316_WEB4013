@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\admins;
 
-use App\Http\Controllers\Controller;
 use App\Models\SanPham;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\SanPhamRequest;
+use Illuminate\Support\Facades\Storage;
 
 class SanPhamController extends Controller
 {
@@ -43,7 +45,7 @@ class SanPhamController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(SanPhamRequest $request)
     {
         // Kiểm tra người có sử dụng FORM để gửi dữ liệu lên không
         if ($request->isMethod('POST')) {
@@ -95,15 +97,45 @@ class SanPhamController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        // Lấy thông tin chi tiết
+        // Xử lý bằng Query Builder
+        $sanPham = $this->san_pham->getDetailProduct($id);
+        if (!$sanPham) {
+            return redirect()->route('sanpham.index')->with('error', 'Không có sản phẩm!');
+        }
+        // Xử lý bằng Eloquent
+        // $sanPham = SanPham::query()->findOrFail($id);
+
+        $title = "Chỉnh sửa thông tin sản phẩm";
+        return view('admins.sanpham.update', compact('title', 'sanPham'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(SanPhamRequest $request, string $id)
     {
-        //
+        if ($request->isMethod('PUT')) {
+            $params = $request->except('_token', '_method');
+
+            // Xử lý hình ảnh
+            $sanPham = SanPham::query()->findOrFail($id);
+            if ($request->hasFile('hinh_anh')) {
+                // Nếu người đẩy hình ảnh mới thì xóa hình ảnh cũ
+                if ($sanPham->hinh_anh) {
+                    Storage::disk('public')->delete($sanPham->hinh_anh);
+                }
+                // Thêm ảnh mới
+                $params['hinh_anh'] = $request->file('hinh_anh')->store('uploads/sanpham', 'public');
+            } else {
+                $params['hinh_anh'] = $sanPham->hinh_anh;
+            }
+
+            // Xử lý Query Builder
+            $this->san_pham->updateProduct($id, $params);
+
+            return redirect()->route('sanpham.index')->with('success', 'Cập nhật thông tin thành công');
+        }
     }
 
     /**
@@ -115,7 +147,7 @@ class SanPhamController extends Controller
         // Lấy ra sản phẩm theo ID
         $san_pham = SanPham::findOrFail($id);
 
-        
+
 
         // dd($san_pham);
 

@@ -18,26 +18,47 @@ class SanPham extends Model
     // }
 
     // Cách 2: Sử dụng Query Builder
-    public function getList() {
+    public function getList()
+    {
         $listSanPham = DB::table('san_phams')
-                    ->orderBy('id', 'DESC')
-                    ->get();
+            ->orderBy('id', 'DESC')
+            ->get();
 
         return $listSanPham;
     }
 
     // Thêm sản phẩm bằng Query Builder
-    public function createProduct($data) {
+    public function createProduct($data)
+    {
         DB::table('san_phams')->insert($data);
     }
 
-    // Xóa sản phẩm bằng Query Builder
-    public function deleteProduct($id) {
-        DB::table('san_phams')
-                    ->where('id', $id)
-                    ->delete();
+    // Lấy thông tin chi tiết
+    public function getDetailProduct($id)
+    {
+        $sanPham = DB::table('san_phams')
+            ->where('id', $id)
+            ->first();
+
+        return $sanPham;
     }
-    
+
+    // Cập nhật dữ liệu
+    public function updateProduct($id, $data)
+    {
+        DB::table('san_phams')
+            ->where('id', $id)
+            ->update($data);
+    }
+
+    // Xóa sản phẩm bằng Query Builder
+    public function deleteProduct($id)
+    {
+        DB::table('san_phams')
+            ->where('id', $id)
+            ->delete();
+    }
+
 
     // Cách 3: Sử dụng Eloquent
     protected $table = 'san_phams';
