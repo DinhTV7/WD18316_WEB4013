@@ -20,14 +20,30 @@ class SanPhamController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         // Sử dụng khi dùng SQL thuần và Query Builder
         // Lấy ra dữ liệu
         // $listSanPham = $this->san_pham->getList();
 
         // Sử dụng Eloquent
-        $listSanPham = SanPham::get();
+        // $listSanPham = SanPham::query()->paginate(1);
+
+        // Lấy ra giá trị tìm kiếm
+        $search = $request->input('search');
+        $searchTrangThai = $request->input('searchTrangThai');
+
+        $listSanPham = SanPham::query()
+            ->when($search, function ($query, $search) {
+                return $query
+                        ->where('ten_san_pham', 'like', "%{$search}%")
+                        ->orWhere('ma_san_pham', 'like', "%{$search}%");
+            })
+            ->when($searchTrangThai !== null, function ($query) use ($searchTrangThai) {
+                return $query->where('trang_thai', '=', $searchTrangThai);
+            })
+            ->paginate(5);
+
         // toArray: Để lấy ra mảng dữ liệu
         $title = "Danh sách sản phẩm";
         return view('admins.sanpham.index', compact('title', 'listSanPham'));
@@ -100,11 +116,12 @@ class SanPhamController extends Controller
         // Lấy thông tin chi tiết
         // Xử lý bằng Query Builder
         $sanPham = $this->san_pham->getDetailProduct($id);
+
+        // Xử lý bằng Eloquent
+        // $sanPham = SanPham::query()->findOrFail($id);
         if (!$sanPham) {
             return redirect()->route('sanpham.index')->with('error', 'Không có sản phẩm!');
         }
-        // Xử lý bằng Eloquent
-        // $sanPham = SanPham::query()->findOrFail($id);
 
         $title = "Chỉnh sửa thông tin sản phẩm";
         return view('admins.sanpham.update', compact('title', 'sanPham'));
@@ -122,7 +139,7 @@ class SanPhamController extends Controller
             $sanPham = SanPham::query()->findOrFail($id);
             if ($request->hasFile('hinh_anh')) {
                 // Nếu người đẩy hình ảnh mới thì xóa hình ảnh cũ
-                if ($sanPham->hinh_anh) {
+                if ($sanPham->hinh_anh && Storage::disk('public')->exists($sanPham->hinh_anh)) {
                     Storage::disk('public')->delete($sanPham->hinh_anh);
                 }
                 // Thêm ảnh mới
@@ -147,19 +164,29 @@ class SanPhamController extends Controller
         // Lấy ra sản phẩm theo ID
         $san_pham = SanPham::findOrFail($id);
 
-
-
         // dd($san_pham);
-
         if ($san_pham) {
             // Nếu tìm thấy sản phẩm thì mới tiến hành xóa sản phẩm đó đi
             // Sử dụng Query Builder
-            $this->san_pham->deleteProduct($id);
+            // $this->san_pham->deleteProduct($id);
 
             // Sử dụng Eloquent
-            // $san_pham->delete();
+            $san_pham->delete();
+
+            if ($san_pham->hinh_anh && Storage::disk('public')->exists($san_pham->hinh_anh)) {
+                Storage::disk('public')->delete($san_pham->hinh_anh);
+            }
+
             return redirect()->route('sanpham.index')->with('success', 'Xóa sản phẩm thành công!');
         }
+        // Hàm dùng để lấy ra toàn bộ sản phẩm đã xóa mềm
+        // $listSanPham = SanPham::get()->onlyTrashed();
+
+        // Hàm dùng để restore sản phẩm sau khi xóa mềm
+        // $san_pham->restore();
+
+        // Hàm dùng để xóa vĩnh viễn sản phẩm
+        // $san_pham->forceDelete();
     }
 
 

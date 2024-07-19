@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SanPham extends Model
 {
@@ -38,6 +39,7 @@ class SanPham extends Model
     {
         $sanPham = DB::table('san_phams')
             ->where('id', $id)
+            ->where('deleted_at', null)
             ->first();
 
         return $sanPham;
@@ -61,6 +63,8 @@ class SanPham extends Model
 
 
     // Cách 3: Sử dụng Eloquent
+    use SoftDeletes;
+
     protected $table = 'san_phams';
 
     protected $fillable = [
@@ -71,6 +75,7 @@ class SanPham extends Model
         'so_luong',
         'ngay_nhap',
         'trang_thai',
+        'deleted_at'
     ];
 
     public $timestamps = false;
