@@ -6,24 +6,23 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index () {
-        // dd(12345);
-        // $title = "Trang chủ";
-        // $text = "Đây là trang client";
-        // return view('clients.index', [
-        //     'title' => $title,
-        //     'text' => $text
-        // ]);
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
-        $data = [];
-        $data['title'] = "Trang chủ";
-        $data['text'] = "Đây là trang client 222";
-        $data['content'] = "<u>Lớp WD18316</u>";
-        $data['dataArr'] = [
-            'Item 1',
-            'Item 2',
-            'Item 3',
-        ];
-        return view('clients.index', $data);
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function index()
+    {
+        return view('home');
     }
 }

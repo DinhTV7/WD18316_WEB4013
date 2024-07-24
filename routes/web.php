@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\admins\SanPhamController;
-use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\admins\SanPhamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,8 +43,13 @@ Route::get('/', function () {
 // ]);
 
 // Route dẫn đến 1 hàm của Controller
+Auth::routes();
 Route::get('/home', [HomeController::class, 'index']);
 
 // Route resouce
 Route::get('sanpham/test', [SanPhamController::class, 'test'])->name('sanpham.test');
 Route::resource('sanpham', SanPhamController::class);
+
+
+
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
