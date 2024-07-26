@@ -53,3 +53,12 @@ Route::resource('sanpham', SanPhamController::class);
 
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/trang-client', function () {
+    return ' Đây là trang client';
+});
+
+Route::get('/trang-admin', function () {
+    return ' Đây là trang admin';
+})->middleware(['auth.admin'])->name('admin');
+
