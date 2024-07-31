@@ -6,6 +6,9 @@ use App\Models\SanPham;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SanPhamRequest;
+use App\Mail\MailConfirm;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class SanPhamController extends Controller
@@ -92,7 +95,10 @@ class SanPhamController extends Controller
             // $this->san_pham->createProduct($params);
 
             // Sử dụng Eloquent
-            SanPham::create($params);
+            $sanPham = SanPham::create($params);
+
+            // Sau khi thêm sản phẩm thì sẽ gửi mail thông tin sản phẩm đó về
+            Mail::to('dinhtv7@fpt.edu.vn')->send(new MailConfirm($sanPham));
 
             // Sau khi thêm thành công thì quay trở về trang danh sách
             // Bắn kèm theo 1 thông báo
